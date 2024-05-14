@@ -6,8 +6,6 @@ const path = require('path');
 const booksRoutes = require('./routes/books');
 const userRoutes = require('./routes/user');
 
-const Book = require('./models/Book')
-
 mongoose
   .connect(
     "mongodb+srv://dinete:FAGZFlj6HHgi0hoR@cluster0.8rqtcdi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
@@ -16,7 +14,16 @@ mongoose
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
+  
   const app = express();
+
+  const corsOptions = {
+    origin: 'http://localhost:3000', // ou '*' pour permettre toutes les origines
+    methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // Permet les cookies CORS
+    optionsSuccessStatus: 200 // Certains navigateurs (IE11, divers SmartTVs) chokent sur 204
+  };
 
 // Middleware
 // app.use((req, res, next) => {
@@ -33,8 +40,8 @@ mongoose
 // });
 
 // Middleware CORS
-app.use(cors());
-
+// app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use('/api/books', booksRoutes);
