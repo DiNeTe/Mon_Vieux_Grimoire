@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
     };
     next();
   } catch (error) {
-    console.error("Error during authentication:", error);
-    res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    console.error(error);
+    res.status(401).json({ error});
   }
 };
