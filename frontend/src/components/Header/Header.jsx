@@ -35,7 +35,7 @@ Header.propTypes = {
   setUser: PropTypes.func.isRequired,
 };
 
-// Header.defaultProps = {
-//   user: null,
-// };
+Header.defaultProps = {
+  user: null,
+};
 export default Header;

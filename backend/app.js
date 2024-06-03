@@ -21,7 +21,7 @@ mongoose
     methods: ['GET', 'POST', 'DELETE', 'UPDATE', 'PUT', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, // Permet les cookies CORS
-    optionsSuccessStatus: 200 // Certains navigateurs (IE11, divers SmartTVs) chokent sur 204
+    optionsSuccessStatus: 200 // Pour IE11
   };
 
 const app = express();

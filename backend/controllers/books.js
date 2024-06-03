@@ -3,8 +3,8 @@ const fs = require("fs");
 
 // Crud Create one book
 exports.createBook = (req, res, next) => {
-  console.log("req.file :", req.file); // Vérifie que le fichier est bien attaché
-  console.log("req.body :", req.body); // Vérifie le corps de la requête
+  console.log("req.file :", req.file);
+  console.log("req.body :", req.body);
 
   const bookObject = JSON.parse(req.body.book);
   const book = new Book({
@@ -38,40 +38,42 @@ exports.ratingOneBook = (req, res, next) => {
       const userRating = book.ratings.find(
         (rating) => rating.userId == req.auth.userId
       );
+      console.log("nombre de note avant:", book.ratings.length);
       if (!userRating) {
         book.ratings.push({ userId, grade });
       } else {
         res.status(404).json({ error });
       }
 
-      console
-        .log("Livre trouvé:", book)
-        .log("Corps de la requête:", req.body)
-        .log("Note de l'utilisateur:", userRating)
-        .log("Note moyenne avant:", book.averageRating)
-        .log("nombre de note avant:", book.ratings.length);
+      console.log("Livre trouvé:", book);
+      console.log("Corps de la requête:", req.body);
+      console.log("Note de l'utilisateur:", userRating);
+      console.log("Note moyenne avant:", book.averageRating);
 
       // Recalcul de la note moyenne
       book.averageRating =
-        book.ratings.reduce((acc, curr) => acc + curr.grade, 0) /
+        book.ratings.reduce((total, rating) => total + rating.grade, 0) /
         book.ratings.length;
       console.log("Note moyenne après:", book.averageRating);
-      console.log("nombre de note après:", book.ratings.length);
 
       book
         .save()
         .then(() => {
           console.log("Nouvelle note enregistrée");
+          console.log("Nombre de notes après:", book.ratings.length);
           res.status(200).json({ message: "Note ajoutée" });
         })
-        .catch(() => {
-          console.error("Erreur lors de la sauvegarde du livre:");
-          res.status(500).json({ error });
+
+        .catch((error) => {
+          console.error("Erreur lors de la sauvegarde du livre", error);
+          res
+            .status(500)
+            .json({ error: "Erreur lors de la sauvegarde du livre" });
         });
     })
-    .catch(() => {
-      console.error("Erreur lors de la recherche du livre:");
-      res.status(500).json({ error });
+    .catch((error) => {
+      console.error("Erreur lors de la recherche du livre:", error);
+      res.status(500).json({ error: "Erreur lors de la recherche du livre" });
     });
 };
 
@@ -92,13 +94,14 @@ exports.getOneBook = (req, res, next) => {
 // cRud Read best average rating
 exports.bestRating = (req, res, next) => {
   Book.find()
+  // tri des livres par note moyenne décroissante
     .sort({ averageRating: -1 })
     .limit(3)
     .then((books) => {
       if (books.length) {
         res.status(200).json(books);
       } else {
-        res.status(404).json({ error });
+        res.status(404).json({message: "Aucun livre trouvé" });
       }
     })
     .catch((error) => {
