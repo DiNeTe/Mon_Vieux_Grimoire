@@ -20,7 +20,7 @@ function AddBook() {
   }, [userLoading]);
 
   return (
-    <div className='content-container'>
+    <div className="content-container">
       <BackArrow />
       <div className={styles.Container}>
         {!created ? (
@@ -33,8 +33,8 @@ function AddBook() {
           <div className={styles.Created}>
             <h1>Merci!</h1>
             <p>votre livre a bien été publié</p>
-            <img src={bookAdd} alt='Livre ajouté' />
-            <Link to='/' className='button'>
+            <img src={bookAdd} alt="Livre ajouté" />
+            <Link to="/" className="button">
               Retour à l&apos;accueil
             </Link>
           </div>
