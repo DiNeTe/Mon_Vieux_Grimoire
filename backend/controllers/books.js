@@ -34,48 +34,39 @@ exports.ratingOneBook = (req, res, next) => {
       const grade = req.body.rating;
       const userId = req.auth.userId;
 
-      // verification si une note à déjà été attribuée par cet utilisateur
+      // Vérification si la note est entre 1 et 5
+      if (grade < 1 || grade > 5) {
+        return res.status(400).json({ message: "La note doit être entre 1 et 5" });
+      }
+
+      // Vérification si une note a déjà été attribuée par cet utilisateur
       const userRating = book.ratings.find(
         (rating) => rating.userId == req.auth.userId
       );
-      console.log("nombre de note avant:", book.ratings.length);
+
       if (!userRating) {
         book.ratings.push({ userId, grade });
       } else {
-        res.status(404).json({ error });
+        return res.status(400).json({ message: "Vous avez déjà noté ce livre" });
       }
-
-      console.log("Livre trouvé:", book);
-      console.log("Corps de la requête:", req.body);
-      console.log("Note de l'utilisateur:", userRating);
-      console.log("Note moyenne avant:", book.averageRating);
 
       // Recalcul de la note moyenne
       book.averageRating =
         book.ratings.reduce((total, rating) => total + rating.grade, 0) /
         book.ratings.length;
-      console.log("Note moyenne après:", book.averageRating);
 
-      book
-        .save()
-        .then(() => {
-          console.log("Nouvelle note enregistrée");
-          console.log("Nombre de notes après:", book.ratings.length);
-          res.status(200).json({ message: "Note ajoutée" });
-        })
-
-        .catch((error) => {
-          console.error("Erreur lors de la sauvegarde du livre", error);
-          res
-            .status(500)
-            .json({ error: "Erreur lors de la sauvegarde du livre" });
+      // Sauvegarder le livre mis à jour et renvoyer le livre mis à jour avec un message
+      return book.save()
+        .then((updatedBook) => {
+          res.status(200).json({ book: updatedBook, message: "Note ajoutée" });
         });
     })
     .catch((error) => {
-      console.error("Erreur lors de la recherche du livre:", error);
-      res.status(500).json({ error: "Erreur lors de la recherche du livre" });
+      console.error("Erreur lors de la sauvegarde du livre", error);
+      res.status(500).json({ error: "Erreur lors de la sauvegarde du livre" });
     });
 };
+
 
 // cRud Read all
 exports.getAllBooks = (req, res, next) => {
@@ -94,14 +85,14 @@ exports.getOneBook = (req, res, next) => {
 // cRud Read best average rating
 exports.bestRating = (req, res, next) => {
   Book.find()
-  // tri des livres par note moyenne décroissante
+    // tri des livres par note moyenne décroissante
     .sort({ averageRating: -1 })
     .limit(3)
     .then((books) => {
       if (books.length) {
         res.status(200).json(books);
       } else {
-        res.status(404).json({message: "Aucun livre trouvé" });
+        res.status(404).json({ message: "Aucun livre trouvé" });
       }
     })
     .catch((error) => {

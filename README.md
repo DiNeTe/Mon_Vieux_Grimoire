@@ -8,3 +8,11 @@
 Faites la commande `npm install` pour installer les dépendances puis `npm start` pour lancer le projet. 
 
 Le projet a été testé sur node 19. 
+
+## Comment demarrer le projet ?
+
+`cd frontend`
+`npm run start`
+
+`cd backend`
+`nodemon server`

@@ -9,7 +9,7 @@ import addFileIMG from '../../../images/add_file.png';
 import styles from './BookForm.module.css';
 import { updateBook, addBook } from '../../../lib/common';
 
-function BookForm({ book, validate }) {
+function BookForm({ book=null, validate=null }) {
   const userRating = book ? book.ratings.find((elt) => elt.userId === localStorage.getItem('userId'))?.grade : 0;
 
   const [rating, setRating] = useState(0);
@@ -138,8 +138,4 @@ BookForm.propTypes = {
   validate: PropTypes.func,
 };
 
-BookForm.defaultProps = {
-  book: null,
-  validate: null,
-};
 export default BookForm;
